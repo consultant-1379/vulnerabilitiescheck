@@ -1,0 +1,4 @@
+"Package Name","Version Installed","VulnerabilityID","Severity","Locations"
+{{- range .Matches}}
+"{{.Artifact.Name}}","{{.Artifact.Version}}","{{.Vulnerability.ID}}","{{.Vulnerability.Severity}}","{{.Artifact.Locations}}"
+{{- end}}

@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "Package Name,Version Installed,VulnerabilityID,Severity,Locations,Fixed Version,Module" > $2
+<$1 jq -r '.[] |select(.vulnerabilities != null) |.component_id as $my_module |.vulnerabilities[] |.cves //= [] |.cves[].cve as $my_cve  |.issue_id as $my_issue_id| .severity as $my_severity | (.components |to_entries[] | .key as $my_3pp | .value as $my_value | ( .value.impact_paths[]|del(last) |[ ($my_3pp |split("//") |.[1] |split(":") | .[0]+":"+.[1],.[2]), $my_cve // $my_issue_id , $my_severity, $my_module, ($my_value.fixed_versions |if . != null then join(";") else "None" end), [.[]|.component_id]]))|select(.[0] | contains("testsuite") |not)' |sed 's/gav:\/\///'| jq -r '[.[]|(if type == "array" then join(">>") else . end)] |@csv' >> $2
